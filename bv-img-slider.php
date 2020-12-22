@@ -14,7 +14,6 @@ class BV_Img_Slider{
     function __construct(){
         add_action('init', array($this, 'custom_post_types'));
         add_action('init', array($this, 'custom_taxonomy'));
-        add_filter('single_template', 'template_single_post');
         add_shortcode('bv-img-slider', array($this, 'short_code_template'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
@@ -29,7 +28,6 @@ class BV_Img_Slider{
         include(plugin_dir_path(__FILE__) . 'includes/custom_taxonomies.php');
     }
     // end of custom_taxonomy
- 
 
     public function short_code_template($atts){
        extract(shortcode_atts(array('gallery_query' => '',), $atts));
