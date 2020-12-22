@@ -3,8 +3,8 @@
 /*
 Plugin Name: BV Image Slider
 Plugin URI:  http://www.brandingverticals.com/
-Description: BV image slider is a dynamic Bootstrap image slider ~ Add shortcode - [bv-img-slider]
-Version:     1.0
+Description: BV image slider is a dynamic Bootstrap image slider ~ Add shortcode - [bv-img-slider gallery_query="category-slug"]
+Version:     1.6
 Author:      dortiz ~ BV Engineering
 Author URI:  http://www.brandingverticals.com/
 */
@@ -32,16 +32,16 @@ class BV_Img_Slider{
  
 
     public function short_code_template($atts){
-       extract(shortcode_atts(array('posts' => 1,), $atts));
+       extract(shortcode_atts(array('gallery_query' => '',), $atts));
        $return_string = '<div id="bv-img-slider" class="carousel slide" data-bs-ride="carousel">';
        $return_string .= '<div class="carousel-inner">';
-       $args = array('post_type' => 'bv_img_slider', 'post_status' => 'publish', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC');
+       $args = array('posts_per_page' => '-1', 'post_type' => 'bv_img_slider', 'tax_query' => array(array('taxonomy' => 'bv_img_slider_taxonomy', 'field'    => 'slug', 'terms' => $gallery_query)));
        $the_query = new WP_Query( $args );
        while ( $the_query->have_posts() ) : $the_query->the_post();
         $return_string .= '<div class="carousel-item';
         if ($the_query->current_post == 0) $return_string .= ' active';
         $return_string .= '">';
-        $return_string .= '<img src="' . get_the_post_thumbnail_url() . '" /></div>';
+        $return_string .= '<img class="img-fluid" src="' . get_the_post_thumbnail_url() . '" /></div>';
     endwhile;
        $return_string .= '</div>';
        $return_string .= '</div>';
