@@ -4,7 +4,7 @@
 Plugin Name: BV Image Slider
 Plugin URI:  http://www.brandingverticals.com/
 Description: BV image slider is a dynamic Bootstrap image slider ~ Add shortcode - [bv-img-slider gallery_query="category-slug"]
-Version:     1.6
+Version:     1.8
 Author:      dortiz ~ BV Engineering
 Author URI:  http://www.brandingverticals.com/
 */
@@ -30,24 +30,36 @@ class BV_Img_Slider{
     // end of custom_taxonomy
 
     public function short_code_template($atts){
-       extract(shortcode_atts(array('gallery_query' => '',), $atts));
-       $return_string = '<div id="bv-img-slider" class="carousel slide" data-bs-ride="carousel">';
-       $return_string .= '<div class="carousel-inner">';
+
+       extract(shortcode_atts(array('gallery_query' => 'bv-img-slider',), $atts));
        $args = array('posts_per_page' => '-1', 'post_type' => 'bv_img_slider', 'tax_query' => array(array('taxonomy' => 'bv_img_slider_taxonomy', 'field'    => 'slug', 'terms' => $gallery_query)));
        $the_query = new WP_Query( $args );
+
+       $return_string = '<div id="'.$gallery_query.'" class="carousel slide" data-bs-ride="carousel">';
+       $return_string .= '<ol class="carousel-indicators">';
+       while ( $the_query->have_posts() ) : $the_query->the_post();
+        $return_string .= '<li data-bs-target="#'.$gallery_query.'" data-bs-slide-to="0" class="slide';
+        if ($the_query->current_post == 0) $return_string .= ' active';
+        $return_string .= '"></li>';
+     endwhile;
+     $return_string .= '</ol>';
+     wp_reset_query();
+
+       $return_string .= '<div class="carousel-inner">';
        while ( $the_query->have_posts() ) : $the_query->the_post();
         $return_string .= '<div class="carousel-item';
         if ($the_query->current_post == 0) $return_string .= ' active';
         $return_string .= '">';
         $return_string .= '<img class="img-fluid" src="' . get_the_post_thumbnail_url() . '" /></div>';
     endwhile;
+       $return_string .= '<a class="carousel-control-next" href="#'.$gallery_query.'" role="button" data-bs-slide="next"><span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Next</span></a>';
+       $return_string .= '  <a class="carousel-control-prev" href="#'.$gallery_query.'" role="button" data-bs-slide="prev"><span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Previous</span></a>';
        $return_string .= '</div>';
        $return_string .= '</div>';
        wp_reset_query();
        return $return_string;
     }
     // end of short_code_template
-
     public function activate(){
         flush_rewrite_rules();
     }
