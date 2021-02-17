@@ -14,6 +14,7 @@ class BV_Img_Slider{
     function __construct(){
         add_action('init', array($this, 'custom_post_types'));
         add_action('init', array($this, 'custom_taxonomy'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts'));
         add_shortcode('bv-img-slider', array($this, 'short_code_template'));
         register_activation_hook(__FILE__, array($this, 'activate'));
     }
@@ -28,6 +29,11 @@ class BV_Img_Slider{
         include(plugin_dir_path(__FILE__) . 'includes/custom_taxonomies.php');
     }
     // end of custom_taxonomy
+
+    public function enqueue_scripts(){
+        include(plugin_dir_path(__FILE__) . 'includes/enqueue_scripts.php');
+    }
+    // end of enqueue_scripts
 
     public function short_code_template($atts){
 
